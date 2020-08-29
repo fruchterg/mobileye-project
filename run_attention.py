@@ -27,7 +27,7 @@ except ImportError:
 print("All imports okay. Yay!")
 
 
-def non_max_suppression(dim, result, c_image):
+def non_max_suppression(dim, result, c_image, color):
     x = []
     y = []
     image_height, image_width = result.shape[:2]
@@ -38,31 +38,18 @@ def non_max_suppression(dim, result, c_image):
             if a > 100:
                 x.append(index // dim + i)
                 y.append(index % dim + j)
-                c_image[index // dim + i, index % dim + j] = 0
+                c_image[index // dim + i, index % dim + j] = color
     return x, y
 
 
 def red_picture(im_red, filter_kernel, c_image):
     grad = sg.convolve2d(im_red, filter_kernel, boundary='symm', mode='same')
     result = ndimage.maximum_filter(grad, size=5)
-    fig, (ax_orig, ax_mag, ax_ang) = plt.subplots(3, 1, figsize=(12, 30))
-    ax_orig.imshow(im_red)
-    ax_orig.set_title('Original')
-    ax_orig.set_axis_off()
-    ax_mag.imshow(np.absolute(grad))
-    ax_mag.set_title('Gradient magnitude')
-    ax_mag.set_axis_off()
-    ax_ang.imshow(np.absolute(result))
-    ax_ang.set_title('Gradient orientation')
-    ax_ang.set_axis_off()
-    fig.show()
-    x_red, y_red = non_max_suppression(14, result, c_image)
+    print_picture(im_red, c_image, result, grad)
+    x_red, y_red = non_max_suppression(14, result, c_image, [255, 0, 0])
     return x_red, y_red
 
-
-def green_picture(im_green, filter_kernel, c_image):
-    grad = sg.convolve2d(im_green, filter_kernel, boundary='symm', mode='same')
-    result = ndimage.maximum_filter(grad, size=5)
+def print_picture(im_green,c_image,result,grad):
     fig, (ax_orig, ax_mag, ax_ang) = plt.subplots(3, 1, figsize=(12, 30))
     ax_orig.imshow(im_green)
     ax_orig.set_title('Original')
@@ -74,11 +61,17 @@ def green_picture(im_green, filter_kernel, c_image):
     ax_ang.set_title('Gradient orientation')
     ax_ang.set_axis_off()
     fig.show()
-    x_green, y_green = non_max_suppression(18, result, c_image)
     fig, (max_mag) = plt.subplots(1, 1, figsize=(6, 15))
     max_mag.set_axis_off()
     max_mag.imshow(np.absolute(c_image))
     fig.show()
+
+
+def green_picture(im_green, filter_kernel, c_image):
+    grad = sg.convolve2d(im_green, filter_kernel, boundary='symm', mode='same')
+    result = ndimage.maximum_filter(grad, size=5)
+    x_green, y_green = non_max_suppression(18, result, c_image, [0, 255, 0])
+    print_picture(im_green, c_image, result, grad)
     return x_green, y_green
 
 
@@ -94,19 +87,19 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     filter_kernel = [
         [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1/225, -1 / 225, -1 / 225, -1 / 225],
         [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,-2 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225,-1 / 225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, 1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225,-1 / 225, -1 / 225, -1 / 225, -1 / 225]]
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1/225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, 1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1/225, -1 / 225, -1 / 225, -1 / 225]]
     x_red, y_red = red_picture(im_red, filter_kernel, c_image)
     x_green, y_green = green_picture(im_green, filter_kernel, c_image)
     print(x_red)
@@ -117,7 +110,7 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     # y_red = [c_image.shape[0] / 2 - 120] * len(x)
     # y_green = [c_image.shape[0] / 2 - 100] * len(x)
     # return x, y_red, x, y_green
-    return x_red, y_red,x_green, y_green
+    return x_red, y_red, x_green, y_green
 
 
 
@@ -162,7 +155,7 @@ def main(argv=None):
     parser.add_argument("-j", "--json", type=str, help="Path to json GT for comparison")
     parser.add_argument('-d', '--dir', type=str, help='Directory to scan images in')
     args = parser.parse_args(argv)
-    default_base = 'data/pic'
+    default_base = 'data'
     if args.dir is None:
         args.dir = default_base
     flist = glob.glob(os.path.join(args.dir, '*_leftImg8bit.png'))
