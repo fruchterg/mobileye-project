@@ -49,7 +49,8 @@ def red_picture(im_red, filter_kernel, c_image):
     x_red, y_red = non_max_suppression(14, result, c_image, [255, 0, 0])
     return x_red, y_red
 
-def print_picture(im_green,c_image,result,grad):
+
+def print_picture(im_green, c_image, result, grad):
     fig, (ax_orig, ax_mag, ax_ang) = plt.subplots(3, 1, figsize=(12, 30))
     ax_orig.imshow(im_green)
     ax_orig.set_title('Original')
@@ -85,33 +86,43 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     im_red = c_image[:, :, 0]
     im_green = c_image[:, :, 1]
     filter_kernel = [
-        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1/225, -1 / 225, -1 / 225, -1 / 225],
-        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, 1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1/225, -1 / 225, -1 / 225, -1 / 225]]
+        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225,
+         -1 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225,
+         -1 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, 11 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225, -2 / 225,
+         -2 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225,
+         -1 / 225, -1 / 225, -1 / 225, -1 / 225],
+        [-1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225, 1 / 225, -1 / 225, -1 / 225, -1 / 225, -1 / 225,
+         -1 / 225, -1 / 225, -1 / 225, -1 / 225]]
     x_red, y_red = red_picture(im_red, filter_kernel, c_image)
     x_green, y_green = green_picture(im_green, filter_kernel, c_image)
-    print(x_red)
-    print(y_red)
-    print(x_green)
-    print(y_green)
     # x = np.arange(-100, 100, 20) + c_image.shape[1] / 2
     # y_red = [c_image.shape[0] / 2 - 120] * len(x)
     # y_green = [c_image.shape[0] / 2 - 100] * len(x)
     # return x, y_red, x, y_green
     return x_red, y_red, x_green, y_green
-
 
 
 def show_image_and_gt(image, objs, fig_num=None):
@@ -127,6 +138,81 @@ def show_image_and_gt(image, objs, fig_num=None):
             plt.legend()
 
 
+def pad_with_zeros(vector, pad_width, iaxis, kwargs):
+    vector[:pad_width[0]] = 0
+    vector[-pad_width[1]:] = 0
+
+
+def crop(image_label, image, x_red, y_red, first, last, labels):
+
+        count1, count2, flag1, flag2 = 0, 0, 0, 0
+        if first > last:
+            side = -1
+        else:
+            side = 1
+
+        for i in range(first, last, side):
+            print(first, last)
+            if not flag1 or not flag2:
+                if image_label[x_red[i], y_red[i]] == 19:
+                    if not flag1:
+                        flag1 = 1
+                        crop_image = image[x_red[i]:x_red[i] + 80, y_red[i]:y_red[i] + 80]
+                        save_image(crop_image)
+                        save_label(labels, "1")
+                        Image.fromarray(crop_image).show()
+                else:
+                    if not flag2:
+                        flag2 = 1
+                        crop_image = image[x_red[i]:x_red[i] + 80, y_red[i]:y_red[i] + 80]
+                        save_image(crop_image)
+                        save_label(labels, "0")
+                        Image.fromarray(crop_image).show()
+            else:
+                break
+
+
+def save_image(crop_image):
+    crop_image.tofile('./data/Data_dir/train/data.bin', sep="", format="%s")
+
+
+def save_label(labels, str):
+    labels.write(str)
+
+
+def correct_data(index):
+    with open(r"./data/Data_dir/train/data.bin", "w") as data:
+        with open(r"./data/Data_dir/train/labels.bin", "w") as labels:
+            labels.seek(index-1, 1)
+            labels_index = labels.read()
+
+
+def get_coord(image):
+    x_red, y_red, x_green, y_green = find_tfl_lights(image, some_threshold=42)
+    return x_red+x_green, y_red+y_green
+
+
+def set_data():
+    image = np.array(Image.open('./data/bremen_000180_000019_leftImg8bit.png'))
+    label = np.array(Image.open('./data/bremen_000180_000019_gtFine_labelIds.png'))
+    # label_path = './data/gtFine'
+    # image_path = './data/leftImg8bit'
+    # for root, dirs, files in os.walk(image_path + '/train'):
+    #     for dir in dirs:
+    #         list_images = glob.glob(os.path.join(image_path +'/train/'+ dir, '*_leftImg8bit.png'))
+    #         list_labels = glob.glob(os.path.join(label_path + '/train/' + dir, '*_gtFine_labelIds.png'))
+    #         for im_path, la_path in zip(list_images, list_labels):
+    #             image = np.array(Image.open(im_path))
+    #             label = np.array(Image.open(la_path))
+    x_coord, y_coord = get_coord(image)
+    image = np.pad(image, 40, pad_with_zeros)[:, :, 40:43]
+
+    with open(r"./data/Data_dir/train/data.bin", "w") as data:
+        with open(r"./data/Data_dir/train/labels.bin", "w") as labels:
+            crop(label, image, x_coord, y_coord, 0, len(x_coord) - 1, labels)
+            crop(label, image, x_coord, y_coord, len(x_coord) - 1, 0, labels)
+
+
 def test_find_tfl_lights(image_path, json_path=None, fig_num=None):
     """
     Run the attention code
@@ -139,7 +225,8 @@ def test_find_tfl_lights(image_path, json_path=None, fig_num=None):
         what = ['traffic light']
         objects = [o for o in gt_data['objects'] if o['label'] in what]
     show_image_and_gt(image, objects, fig_num)
-    find_tfl_lights(image, some_threshold=42)
+    x_red, y_red, x_green, y_green = find_tfl_lights(image, some_threshold=42)
+
     # red_x, red_y, green_x, green_y = find_tfl_lights(image, some_threshold=42)
     # plt.plot(red_x, red_y, 'ro', color='r', markersize=4)
     # plt.plot(green_x, green_y, 'ro', color='g', markersize=4)
@@ -154,6 +241,7 @@ def main(argv=None):
     parser.add_argument('-i', '--image', type=str, help='Path to an image')
     parser.add_argument("-j", "--json", type=str, help="Path to json GT for comparison")
     parser.add_argument('-d', '--dir', type=str, help='Directory to scan images in')
+    set_data()
     args = parser.parse_args(argv)
     default_base = 'data'
     if args.dir is None:
@@ -169,6 +257,8 @@ def main(argv=None):
     else:
         print("Bad configuration?? Didn't find any picture to show")
     plt.show(block=True)
+
+    # correct_data(2)
 
 
 if __name__ == '__main__':
