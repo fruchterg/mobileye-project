@@ -80,3 +80,6 @@ def calc_dist(p_curr, p_rot, foe, tZ):
     difference_y = abs(p_rot[1] - p_curr[1])
     ratio = difference_x / (difference_y + difference_x)
     return dis_x * ratio + dis_y * (1 - ratio)
+
+
+

@@ -42,7 +42,6 @@ class FrameContainer(object):
         self.valid = []
 
 
-# read data and run
 curr_frame_id = 26
 prev_frame_id = 25
 pkl_path = 'dusseldorf_000049.pkl'
